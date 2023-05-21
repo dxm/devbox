@@ -1,0 +1,123 @@
+---
+- name: install packages
+  ansible.builtin.package:
+    name: '{{ libvirt_packages }}'
+    state: present
+  become: yes
+  tags:
+  - libvirt
+
+- name: add user to groups
+  ansible.builtin.user:
+    name: '{{ username }}'
+    groups: libvirt
+    append: yes
+  become: yes
+  tags:
+  - libvirt
+
+# starting libvirt will always be changed as their is a timeout of 120s
+# https://fedoraproject.org/wiki/Changes/LibvirtModularDaemons
+
+- name: enable service
+  ansible.builtin.service:
+    name: libvirtd
+    enabled: true
+  become: yes
+  tags:
+  - libvirt
+
+- name: gather facts
+  community.libvirt.virt_net:
+    command: facts
+  tags:
+  - libvirt
+
+- name: define network
+  community.libvirt.virt_net:
+    name: '{{ item.name }}'
+    command: define
+    xml: '{{ lookup("ansible.builtin.template", "network.xml") }}'
+  when: item.name not in ansible_libvirt_networks
+  loop: '{{ libvirt_networks }}'
+  tags:
+  - libvirt
+
+- name: create network
+  community.libvirt.virt_net:
+    name: '{{ item.name }}'
+    command:  create
+  when: item.name not in ansible_libvirt_networks
+  loop: '{{ libvirt_networks }}'
+  tags:
+  - libvirt
+
+- name: activate network
+  community.libvirt.virt_net:
+    name: '{{ item.name }}'
+    state: active
+  when:
+  - item.name in ansible_libvirt_networks
+  #- ansible_libvirt_networks[item.name].state != 'active'
+  loop: '{{ libvirt_networks }}'
+  tags:
+  - libvirt
+
+- name: autostart network
+  community.libvirt.virt_net:
+    name: '{{ item.name }}'
+    autostart: yes
+  when:
+  - item.name in ansible_libvirt_networks
+  #- ansible_libvirt_networks[item.name].autostart | bool is false
+  loop: '{{ libvirt_networks }}'
+  tags:
+  - libvirt
+
+- name: pool facts
+  community.libvirt.virt_pool:
+    command: facts
+  tags:
+  - libvirt
+
+- name: define pool
+  community.libvirt.virt_pool:
+    command: define
+    name: '{{ item.name }}'
+    xml: '{{ lookup("template", "pool.xml") }}'
+  loop: '{{ libvirt_pools }}'
+  when: item.name not in ansible_libvirt_pools
+  tags:
+  - libvirt
+
+- name: build pool
+  community.libvirt.virt_pool:
+    command: build
+    name: '{{ item.name }}'
+  when: item.name not in ansible_libvirt_pools
+  loop: '{{ libvirt_pools }}'
+  tags:
+  - libvirt
+
+# non-idempotent
+- name: start pool
+  community.libvirt.virt_pool:
+    command: start
+    name: '{{ item.name }}'
+  when:
+  - item.name in ansible_libvirt_pools
+  - ansible_libvirt_pools[item.name].state != 'active'
+  loop: '{{ libvirt_pools }}'
+  tags:
+  - libvirt
+
+- name: set pool to autostart
+  community.libvirt.virt_pool:
+    name: '{{ item.name }}'
+    autostart: yes
+  when:
+  - item.name in ansible_libvirt_pools
+  #- ansible_libvirt_pools[item.name].autostart | bool is false
+  loop: '{{ libvirt_pools }}'
+  tags:
+  - libvirt

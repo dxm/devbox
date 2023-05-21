@@ -1,0 +1,12 @@
+---
+- name: check vm status
+  community.libvirt.virt:
+    command: list_vms
+  register: result
+
+- name: start vm
+  community.libvirt.virt:
+    name: '{{ item.name }}'
+    state: running
+  when: item.name in result.list_vms
+  with_items: '{{ virt_hosts }}'

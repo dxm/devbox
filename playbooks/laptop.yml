@@ -1,0 +1,21 @@
+---
+- name: setup laptop
+  hosts:
+  - laptop
+  become: yes
+  become_user: root
+  gather_facts: yes
+
+  pre_tasks:
+  - set_fact:
+     username: "{{ lookup('pipe', 'whoami') }}"
+    tags:
+    - always
+
+  roles:
+  - ansible
+  - tools
+  - devel
+  - rpmfusion
+  - desktop
+  #- libvirt

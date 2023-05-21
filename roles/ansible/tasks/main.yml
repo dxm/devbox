@@ -1,0 +1,7 @@
+---
+- name: install python packages
+  ansible.builtin.package:
+    name: '{{ ansible_packages }}'
+    state: present
+  tags:
+  - python

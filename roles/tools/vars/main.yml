@@ -1,0 +1,12 @@
+---
+tools_packages:
+- htop
+- nmap
+- openssl
+- pass
+- pwgen
+- rlwrap
+- smartmontools
+- tmux
+- tree
+- vim-enhanced

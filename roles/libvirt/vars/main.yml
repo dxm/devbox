@@ -1,0 +1,15 @@
+---
+libvirt_networks:
+- name: default
+  bridge: virbr0
+  network: 192.168.124.0/24
+libvirt_pools:
+- name: media
+  path: /var/lib/libvirt/media
+- name: images
+  path: /var/lib/libvirt/images
+libvirt_packages:
+- '@virtualization'
+- python3-libvirt
+- python3-lxml
+- python3-netaddr

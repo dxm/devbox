@@ -1,0 +1,21 @@
+---
+- name: check vm status
+  community.libvirt.virt:
+    command: list_vms
+  register: result
+
+- name: shutdown vm
+  community.libvirt.virt: 
+    name: '{{ item.name }}'
+    state: destroyed
+  when: item.name in result.list_vms
+  with_items: '{{ virt_hosts }}'
+
+- name: delete vm
+  community.libvirt.virt:
+    command: undefine
+    name: '{{ item.name }}'
+  when:
+  - item.name in result.list_vms
+  - virt_delete is defined and virt_delete | bool
+  with_items: '{{ virt_hosts }}'

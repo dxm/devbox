@@ -1,0 +1,16 @@
+---
+- name: virt test
+  hosts:
+  - localhost
+  become: yes
+  become_user: root
+  gather_facts: yes
+
+  roles:
+  # playbook vars are overridden by role vars, change to defaults or use below
+  - role: libvirt
+    vars:
+      libvirt_networks:
+      - name: test
+        domain: test.virt
+        network: 192.168.77.0/24

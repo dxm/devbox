@@ -1,0 +1,66 @@
+---
+# NOTE: handlers will not process until end of all roles unless we flush
+# them explicitly (all or nothing). Opted here to force restart if files
+# did change so we can pause after restart for next plays right away and
+# explicit when change happens. We can't control the pause later on
+# hanlder when it runs not sure of impact for later roles.
+
+- name: turn off systemd-resolved
+  service:
+    name: systemd-resolved
+    state: stopped
+    enabled: no
+  become: yes
+  tags:
+  - network
+
+- name: check if resolv.conf is symlink (systemd)
+  stat:
+    path: /etc/resolv.conf
+  register: st
+  become: yes
+  tags:
+  - network
+
+- name: remove resolv.conf if symlink (systemd)
+  file:
+    path: /etc/resolv.conf
+    state: absent
+  when: st.stat.islnk
+  register: network_rs_symlink
+  become: yes
+  tags:
+  - network
+
+
+- name: enable dnsmasq for NetworkManager
+  copy:
+    dest: /etc/NetworkManager/conf.d/dnsmasq.conf
+    owner: root
+    group: root
+    mode: 0644
+    content: |
+      [main]
+      dns=dnsmasq
+  register: network_rs_dnsmasq
+  become: yes
+  tags:
+  - network
+
+- name: restart networkmanager
+  service:
+    name: NetworkManager
+    state: restarted
+  when: network_rs_symlink is changed or network_rs_dnsmasq is changed
+  register: network_rs
+  become: yes
+  tags:
+  - network
+
+- name: pause if networkmanager is restarted
+  pause:
+    seconds: 3
+  when: network_rs is changed
+  become: no
+  tags:
+  - network

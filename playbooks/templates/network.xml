@@ -1,0 +1,16 @@
+<network>
+  <name>{{ item.name }}</name>
+  <forward mode='nat'>
+    <nat>
+      <port start='1024' end='65535'/>
+    </nat>
+  </forward>
+  <domain name='{{ item.domain }}' localOnly='no'/>
+  <bridge name='{{ item.bridge }}' stp='on' delay='0'/>
+  <ip address='{{ item.network | ansible.utils.ipaddr("address") }}' netmask='{{ item.network | ansible.utils.ipaddr("netmask") }}'>
+    <dhcp>
+    <range start='{{ item.network | ansible.utils.ipaddr("next_usable") }}' end='{{ item.network | ansible.utils.ipaddr("last_usable") }}'/>
+    </dhcp>
+  </ip>
+</network>
+

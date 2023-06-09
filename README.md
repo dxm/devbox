@@ -1,3 +1,3 @@
 # Devbox
 
-Test on fedora 38 only.
+Tested on fedora 38 only.

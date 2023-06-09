@@ -3,7 +3,6 @@ tools_packages:
 - htop
 - nmap
 - openssl
-- pass
 - pwgen
 - rlwrap
 - smartmontools

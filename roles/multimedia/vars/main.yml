@@ -1,0 +1,13 @@
+---
+# NOTE: will install one additional devel package, don't care. for codec instructions:
+# https://docs.fedoraproject.org/en-US/quick-docs/assembly_installing-plugins-for-playing-movies-and-music/
+# maybe there is a better way for vars and allowerasing
+multimedia_packages:
+- 'gstreamer1-plugins-bad-*'
+- 'gstreamer1-plugins-good-*'
+- gstreamer1-plugins-base
+- gstreamer1-libav
+- gstreamer1-plugin-openh264
+
+multimedia_packages_exclude:
+- gstreamer1-plugins-bad-free-devel

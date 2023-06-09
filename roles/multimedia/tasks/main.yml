@@ -1,0 +1,10 @@
+---
+- name: install packages
+  ansible.builtin.package:
+    name: '{{ multimedia_packages }}'
+    state: present
+    allowerasing: true
+    exclude: '{{ multimedia_packages_exclude }}'
+  become: yes
+  tags:
+  - multimedia

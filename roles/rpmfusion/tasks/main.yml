@@ -19,20 +19,3 @@
   become: yes
   tags:
   - rpmfusion
-
-- name: install codecs
-  ansible.builtin.package:
-    name: '{{ rpmfusion_packages }}'
-    state: present
-  become: yes
-  tags:
-  - rpmfusion
-
-- name: install ffmpeg
-  ansible.builtin.package:
-    name: ffmpeg
-    state: present
-    allowerasing: true
-  tags:
-  - rpmfusion
-

@@ -1,10 +1,4 @@
 ---
-# NOTE: handlers will not process until end of all roles unless we flush
-# them explicitly (all or nothing). Opted here to force restart if files
-# did change so we can pause after restart for next plays right away and
-# explicit when change happens. We can't control the pause later on
-# hanlder when it runs not sure of impact for later roles.
-
 - name: turn off systemd-resolved
   service:
     name: systemd-resolved
@@ -32,7 +26,6 @@
   tags:
   - network
 
-
 - name: enable dnsmasq for NetworkManager
   copy:
     dest: /etc/NetworkManager/conf.d/dnsmasq.conf
@@ -57,9 +50,11 @@
   tags:
   - network
 
+# NOTE: force restart as handler is at end of play and we don't want to
+# use flush either. Network will be lost during restart.
 - name: pause if networkmanager is restarted
   pause:
-    seconds: 3
+    seconds: 5
   when: network_rs is changed
   become: no
   tags:

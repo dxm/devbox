@@ -1,24 +1,14 @@
 ---
 desktop_packages:
+- brasero
 - chromium
 - firefox-wayland
 - gnome-epub-thumbnailer
 - gnome-extensions-app
 - gnome-tweak-tool
-- mozilla-ublock-origin
-- secrets
 - xfreerdp
 - yt-dlp
 
-# Is this still needed, on 37 it seems only lcdfilter is not symlinked to
-# /etc/fonts?
-desktop_fontconfig:
-- /usr/share/fontconfig/conf.avail/10-autohint.conf
-- /usr/share/fontconfig/conf.avail/10-sub-pixel-rgb.conf
-- /usr/share/fontconfig/conf.avail/11-lcdfilter-default.conf
-
-# NOTE: scaling seems to be an issue, it sometimes works or not after being
-# set, needs further testing
 desktop_settings:
 - key: /org/gnome/desktop/interface/clock-format
   value: "'12h'"

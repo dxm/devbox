@@ -13,9 +13,8 @@
     - always
 
   roles:
-  - ansible
   - tools
   - devel
-  - rpmfusion
+  - multimedia
   - desktop
-  #- libvirt
+  - libvirt

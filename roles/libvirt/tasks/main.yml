@@ -16,9 +16,6 @@
   tags:
   - libvirt
 
-# starting libvirt will always be changed as their is a timeout of 120s
-# https://fedoraproject.org/wiki/Changes/LibvirtModularDaemons
-
 - name: enable service
   ansible.builtin.service:
     name: libvirtd
@@ -99,7 +96,6 @@
   tags:
   - libvirt
 
-# non-idempotent
 - name: start pool
   community.libvirt.virt_pool:
     command: start
@@ -117,7 +113,6 @@
     autostart: yes
   when:
   - item.name in ansible_libvirt_pools
-  #- ansible_libvirt_pools[item.name].autostart | bool is false
   loop: '{{ libvirt_pools }}'
   tags:
   - libvirt

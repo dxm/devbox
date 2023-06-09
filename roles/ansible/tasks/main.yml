@@ -1,7 +1,8 @@
 ---
-- name: install python packages
-  ansible.builtin.package:
+- name: install packages
+  dnf:
     name: '{{ ansible_packages }}'
     state: present
+  become: yes
   tags:
-  - python
+  - ansible

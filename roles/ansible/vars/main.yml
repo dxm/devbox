@@ -1,5 +1,4 @@
 ---
-# NOTE: needed dependencies for ansible modules ipaddr and others
 ansible_packages:
-- python3-psutil
 - python3-netaddr
+- python3-psutil

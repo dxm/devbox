@@ -7,31 +7,36 @@
   tags:
   - desktop
 
-#- name: update fontconfig
-#  ansible.builtin.file:
-#    path: /etc/fonts/conf.d/{{ item | basename }}
-#    src: '{{ item }}'
-#    owner: root
-#    group: root
-#    mode: 755
-#    state: link
-#  loop: '{{ desktop_fontconfig }}'
-#  become: yes
-#  tags:
-#  - desktop
+- name: update gsettings
+  community.general.dconf:
+    key: '{{ item.key }}'
+    value: '{{ item.value }}'
+    state: present
+  loop: '{{ desktop_settings }}'
+  become: no
+  tags:
+  - desktop
 
-#- name: update gsettings
-#  community.general.dconf:
-#    key: '{{ item.key }}'
-#    value: '{{ item.value }}'
-#    state: present
-#  loop: '{{ desktop_settings }}'
-#  become: no
-#  tags:
-#  - desktop
-
-# For some reason this worked in 36 using community dconf module but not for 37, command seems to do trick
+# NOTE: was needed previously, doesn't seem to be now
 #- name: set fractional scaling
 #  command:
 #    cmd: gsettings --schemadir /usr/share/glib-2.0/schemas  set org.gnome.mutter experimental-features '["scale-monitor-framebuffer"]'
 #
+
+- name: add user to cdrom group
+  ansible.builtin.user:
+    name: '{{ username }}'
+    groups: cdrom
+    append: yes
+  become: yes
+  tags:
+  - desktop
+
+# https://bugzilla.redhat.com/show_bug.cgi?id=1583845#c5
+- name: set permissions needed on wodim
+  ansible.builtin.command: 
+    cmd: setcap cap_ipc_lock+pe /usr/bin/wodim
+  become: yes
+  tags:
+  - desktop
+
